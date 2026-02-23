@@ -1,0 +1,54 @@
+const String baseURL = 'https://thaistat.nso.go.th/api/';
+const String app_name = 'THAI STAT';
+const String cat_id1 = '101';
+const String cat_id2 = '102';
+const String cat_id3 = '103';
+const String cat_id4 = '104';
+const String cat_id5 = '105';
+const String cat_id6 = '106';
+const String cat_id7 = '107';
+const String cat_id8 = '108';
+const String cat_id9 = '109';
+const String cat_id10 = '210';
+const String cat_id11 = '211';
+const String cat_id12 = '212';
+const String cat_id13 = '213';
+const String cat_id14 = '214';
+const String cat_id15 = '215';
+const String cat_id16 = '216';
+const String cat_id17 = '217';
+const String cat_id18 = '218';
+const String cat_id19 = '219';
+const String cat_id20 = '220';
+const String cat_id21 = '321';
+const String sub_id1 = 'MA10101Y';
+const String sub_id2 = 'MA10201M';
+const String sub_id3 = 'MA10301Y';
+const String sub_id4 = 'MA10401Y';
+const String sub_id5 = 'MA10501Y';
+const String sub_id6 = 'MA10601Y';
+const String sub_id7 = 'MA10701Y';
+const String sub_id8 = 'MA10801Y';
+const String sub_id9 = 'MA10901Y';
+const String sub_id10 = 'MA21001Q';
+const String sub_id11 = 'MA21101Y';
+const String sub_id12 = 'MA21201Y';
+const String sub_id13 = 'MA21301Y';
+const String sub_id14 = 'MA21401Y';
+const String sub_id15 = 'MA21501Y';
+const String sub_id16 = 'MA21601Y';
+const String sub_id17 = 'MA21701Y';
+const String sub_id18 = 'MA21801Y';
+const String sub_id19 = 'MA21901Y';
+const String sub_id20 = 'MA22001Y';
+const String sub_id21 = 'MA32101Y';
+const String province_data_url =
+    'https://thaistat.nso.go.th/api/province_data.php';
+const String province_info_url =
+    'https://thaistat.nso.go.th/api/province_info.php';
+const String show_table_url =
+    'https://thaistat.nso.go.th/api/get_table.php?bid=';
+const String calendar_url =
+    'https://thaistat.nso.go.th/api/schedule_calendar.php';
+// 'https://www.nso.go.th/nsoweb/main/schedule_calendar';
+const String contact_url = 'https://www.nso.go.th/nsoweb/main/contact';
