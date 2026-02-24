@@ -9,23 +9,18 @@ workflows:
       flutter: 3.16.2
       xcode: latest
     scripts:
-      - name: Pre-build setup (Signing & Deps)
+      - name: Set up code signing
         script: | 
           keychain initialize
-          # คำสั่งนี้จะดึงโปรไฟล์ที่คุณทำให้มัน "เขียว" ในหน้าเว็บมาเตรียมไว้ครับ
+          # ใช้คำสั่งเดียวสั้นๆ เพื่อดึงค่า "สีเขียว" จากหน้าเว็บมาลุยเลยครับ
           xcode-project use-profiles
+      - name: Get Flutter packages
+        script: |
           flutter packages pub get
-      - name: Build Unsigned Archive
+      - name: Flutter build ipa
         script: |
-          # สร้างแอปแบบไม่เซ็นชื่อ เพื่อข้าม Roadblock ของ Xcode ขั้นตอนนี้จะผ่านแน่นอน
-          flutter build ipa --release --no-codesign --build-number=$BUILD_NUMBER
-      - name: Sign and Export IPA
-        script: |
-          # ใช้เครื่องมือของ Codemagic เซ็นชื่อทับลงในไฟล์ที่ได้จากขั้นตอนก่อนหน้า
-          # วิธีนี้จะใช้โปรไฟล์ที่ "เขียว" ในหน้าเว็บมาแปะให้โดยตรง
-          xcode-project build-ipa \
-            --workspace ios/Runner.xcworkspace \
-            --scheme Runner
+          # Build ด้วยคำสั่งมาตรฐาน เลข Build จะรันอัตโนมัติจากหน้าเว็บ
+          flutter build ipa --release --export-method app-store --build-number=$BUILD_NUMBER
     artifacts:
       - build/ios/ipa/*.ipa
     publishing:
