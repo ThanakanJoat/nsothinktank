@@ -14,18 +14,22 @@ workflows:
       - name: Set up code signing settings on Codemagic
         script: | 
           keychain initialize
-          # คำสั่งนี้จะสร้างใบรับรองใหม่ทันทีถ้าเราลบของเก่าในเว็บ Apple ออกแล้ว
+          # 1. โหลดใบรับรองทั้ง 2 แบบ (ต้องใช้ทั้งคู่ Xcode ถึงจะยอมให้ผ่าน)
+          app-store-connect fetch-signing-files "th.go.nso.ThaiStatNso2019" --type IOS_APP_DEVELOPMENT --create
           app-store-connect fetch-signing-files "th.go.nso.ThaiStatNso2019" --type IOS_APP_STORE --create
           keychain add-certificates
+          # 2. ล้างค่า Team ID เดิมและบังคับปิด Automatic Signing (เพื่อไม่ให้ Xcode ถามหา Apple ID บุคคล)
+          sed -i '' 's/DEVELOPMENT_TEAM = HTYHCF93L8;//g' ios/Runner.xcodeproj/project.pbxproj
+          sed -i '' 's/CODE_SIGN_STYLE = Automatic;/CODE_SIGN_STYLE = Manual;/g' ios/Runner.xcodeproj/project.pbxproj
+          # 3. แมตช์ใบรับรองเข้ากับโปรเจกต์
           xcode-project use-profiles
       - name: Get Flutter packages
         script: |
           flutter packages pub get
       - name: Flutter build ipa
         script: |
-          # ใช้คำสั่งมาตรฐานเพื่อสร้างไฟล์พร้อมส่ง App Store
+          # 4. Build และเลือกใบรับรองแบบ App Store เพื่อส่งขึ้น Store
           flutter build ipa --release --export-method app-store
-    artifacts:
     artifacts:
       - build/ios/ipa/*.ipa
     publishing:
