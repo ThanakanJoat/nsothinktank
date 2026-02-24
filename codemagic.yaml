@@ -29,6 +29,7 @@ workflows:
           # 2. ใช้คำสั่งวิเศษเพื่อ Build IPA โดย "ข้าม" การตรวจใบรับรองในขั้นตอนแรก (Archive)
           # แล้วค่อยให้มันไปเซ็นชื่อจริงๆ ในขั้นตอนสุดท้าย (Export)
           xcode-project build-ipa \
+            --verbose \
             --workspace ios/Runner.xcworkspace \
             --scheme Runner \
             --archive-flags="CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO"
