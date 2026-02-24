@@ -14,8 +14,8 @@ workflows:
       - name: Set up code signing settings on Codemagic
         script: | 
           keychain initialize
-          # ดึงใบรับรองสำหรับส่ง App Store มาเตรียมไว้
-          app-store-connect fetch-signing-files "th.go.nso.ThaiStatNso2019" --type IOS_APP_STORE --create
+          # บังคับสร้างกุญแจส่วนตัว (Private Key) ใหม่ในเครื่อง Cloud เพื่อแก้ปัญหาหาบัตรไม่เจอนี้
+          app-store-connect fetch-signing-files "th.go.nso.ThaiStatNso2019" --type IOS_APP_STORE --create --generate-certificate
           keychain add-certificates
       - name: Get Flutter packages
         script: |
