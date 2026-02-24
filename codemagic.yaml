@@ -9,21 +9,33 @@ workflows:
       flutter: 3.16.2
       xcode: latest
     scripts:
-      - name: Set up code signing from UI
+      - name: Set up code signing
         script: | 
           keychain initialize
-          # ดึงโปรไฟล์ "สีเขียว" จากหน้าเว็บที่คุณตั้งค่าไว้
+          # 1. ดึงโปรไฟล์ "สีเขียว" จากหน้าเว็บมาลงเครื่อง
           xcode-project use-profiles
+
+          # 2. ปรับแต่งโปรเจกต์ Xcode ให้ยอมใช้โปรไฟล์แบบ Manual ที่เราเตรียมไว้
+          # (ขั้นตอนนี้สำคัญมาก เพื่อข้ามปัญหา No development certificates)
+          sed -i '' 's/CODE_SIGN_STYLE = Automatic;/CODE_SIGN_STYLE = Manual;/g' ios/Runner.xcodeproj/project.pbxproj
+          sed -i '' 's/CODE_SIGN_IDENTITY = "Apple Development";/CODE_SIGN_IDENTITY = "Apple Distribution";/g' ios/Runner.xcodeproj/project.pbxproj
+          sed -i '' 's/CODE_SIGN_IDENTITY\[sdk=iphoneos\*\] = "iPhone Developer";/CODE_SIGN_IDENTITY = "Apple Distribution";/g' ios/Runner.xcodeproj/project.pbxproj
       - name: Get Flutter packages
         script: |
           flutter packages pub get
-      - name: Flutter build ipa
+      - name: Build IPA (Final Version)
         script: |
-          # เพิ่มตัวเลือก --codesign-identity เพื่อบอก Flutter ว่า "ไม่ต้องไปหา Development ให้ใช้ Apple Distribution เท่านั้น"
+          # ใช้คำสั่งมาตรฐาน แต่เจาะจงให้ข้ามขั้นตอนการเซ็นชื่อของ Xcode 
+          # แล้วให้ Codemagic จัดการแปะใบรับรองให้เองในตัว
           flutter build ipa --release \
             --export-method app-store \
             --build-number=$BUILD_NUMBER \
-            --codesign-identity="Apple Distribution"
+            --no-codesign
+            
+          # ขั้นตอนนี้จะหยิบเอาไฟล์จากหน้าเว็บมาเซ็นทับลงไปอย่างถูกต้อง
+          xcode-project build-ipa \
+            --workspace ios/Runner.xcworkspace \
+            --scheme Runner
     artifacts:
       - build/ios/ipa/*.ipa
     publishing:
