@@ -14,8 +14,9 @@ workflows:
       - name: Set up code signing settings on Codemagic
         script: | 
           keychain initialize
-          # สั่งให้สร้างใบรับรองใหม่พร้อมกุญแจส่วนตัวในเครื่อง cloud ทันที
-          app-store-connect fetch-signing-files "th.go.nso.ThaiStatNso2019" --type IOS_APP_STORE --create --generate-certificate
+          # ดึงใบรับรองทั้งสองแบบ (ต้องใช้สิทธิ์ API Key ระดับ Admin)
+          app-store-connect fetch-signing-files "th.go.nso.ThaiStatNso2019" --type IOS_APP_DEVELOPMENT --create
+          app-store-connect fetch-signing-files "th.go.nso.ThaiStatNso2019" --type IOS_APP_STORE --create
           keychain add-certificates
           xcode-project use-profiles
       - name: Get Flutter packages
@@ -23,8 +24,11 @@ workflows:
           flutter packages pub get
       - name: Flutter build ipa
         script: |
-          # ใช้คำสั่งมาตรฐานเดียวกับที่คุณรันในเครื่อง แต่ให้ Codemagic จัดการเรื่อง Signing ให้อัตโนมัติ
-          flutter build ipa --release --export-method app-store
+          # ใช้คำสั่ง build ipa พร้อมระบุ Export Method ที่ชัดเจน
+          flutter build ipa --release \
+            --export-method app-store \
+            --build-name=4.2.2 \
+            --build-number=27
     artifacts:
       - build/ios/ipa/*.ipa
     publishing:
