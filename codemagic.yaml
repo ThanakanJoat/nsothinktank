@@ -9,27 +9,18 @@ workflows:
       flutter: 3.16.2
       xcode: latest
     scripts:
-      - name: Initialize Keychain and Fetch Signing Files
+      - name: Set up code signing from UI
         script: | 
+          # สคริปต์นี้มีแค่นี้พอครับ คือการบอกว่า "ให้เอาโปรไฟล์ที่ตั้งในหน้าเว็บมาใช้"
           keychain initialize
-          # Fetch matching profiles and certificates. 
-          # Use --create to ensure Codemagic creates what is missing.
-          app-store-connect fetch-signing-files "th.go.nso.ThaiStatNso2019" --type IOS_APP_STORE --create
-          keychain add-certificates
+          xcode-project use-profiles
       - name: Get Flutter packages
         script: |
           flutter packages pub get
-      - name: Build unsigned IPA
+      - name: Flutter build ipa
         script: |
-          # Build without signing to bypass Xcode's internal profile checks
-          flutter build ipa --release --no-codesign --build-number=$BUILD_NUMBER
-      - name: Sign IPA with Codemagic
-        script: |
-          # Sign the generated archive using the fetched certificates and profiles
-          # This tool is more robust than Xcode's internal signing logic
-          xcode-project build-ipa \
-            --workspace ios/Runner.xcworkspace \
-            --scheme Runner
+          # ใช้เลข Build จากหน้าเว็บ และส่งออกตามวิธีที่คุณตั้งไว้
+          flutter build ipa --release --export-method app-store --build-number=$BUILD_NUMBER
     artifacts:
       - build/ios/ipa/*.ipa
     publishing:
