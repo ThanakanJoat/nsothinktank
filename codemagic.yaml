@@ -6,7 +6,7 @@ workflows:
     integrations:
       app_store_connect: "THAI STAT App Manager" # เปลี่ยนเป็นชื่อที่คุณตั้งในหน้า Integrations
     environment:
-      flutter: stable
+      flutter: 3.16.2
       xcode: latest
       groups:
         - apple_auth
