@@ -1,20 +1,19 @@
 workflows:
-  ios-release:
+  ios-release-workflow:
     name: iOS Release Build
-    instance_type: mac_mini_m1
     max_build_duration: 120
+    instance_type: mac_mini_m1
     integrations:
-      app_store_connect: "THAI STAT Admin_CI" # เปลี่ยนเป็นชื่อที่คุณตั้งในหน้า Integrations
+      app_store_connect: "THAI STAT Admin_CI"
     environment:
       flutter: 3.16.2
       xcode: latest
       groups:
-        - apple_auth
+        - app_store_credentials
     scripts:
       - name: Set up code signing settings on Codemagic
         script: | 
           keychain initialize
-          # ดึงใบรับรองทั้ง 2 แบบมาเตรียมไว้ เพื่อไม่ให้ Xcode บ่นหาอันใดอันหนึ่ง
           app-store-connect fetch-signing-files "th.go.nso.ThaiStatNso2019" --type IOS_APP_DEVELOPMENT --create
           app-store-connect fetch-signing-files "th.go.nso.ThaiStatNso2019" --type IOS_APP_STORE --create
           keychain add-certificates
@@ -23,18 +22,16 @@ workflows:
           flutter packages pub get
       - name: Flutter build xcarchive (No Signing)
         script: |
-          # สร้างแอปแบบดิบโดยไม่เซ็นชื่อ (ขั้นตอนนี้จะผ่านแน่นอน)
+          # สร้างไฟล์แอปโดยไม่ต้องเช็คใบรับรองในขั้นตอนนี้ เพื่อข้ามปัญหา Xcode roadblock
           flutter build ipa --release --no-codesign
       - name: Export and Sign IPA with Codemagic
         script: |
-          # ใช้เครื่องมือของ Codemagic เซ็นชื่อทับลงไปโดยตรง ไม่ผ่านระบบตรวจสอบของ Xcode
+          # ใช้เครื่องมือ Codemagic เซ็นชื่อทับลงไปโดยตรง
           xcode-project build-ipa \
             --workspace ios/Runner.xcworkspace \
             --scheme Runner
-    artifacts:
     artifacts:
       - build/ios/ipa/*.ipa
     publishing:
       app_store_connect:
         auth: integration
-        submit_to_testflight: true
