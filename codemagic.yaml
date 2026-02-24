@@ -8,27 +8,19 @@ workflows:
     environment:
       flutter: 3.16.2
       xcode: latest
-      groups:
-        - app_store_credentials
     scripts:
-      - name: Set up code signing settings on Codemagic
+      - name: Set up code signing
         script: | 
+          # ไม่ต้องใช้สคริปต์ fetch อีกต่อไป เพราะคุณตั้งค่าในหน้าเว็บ (Provisioning Profiles) เรียบร้อยแล้ว
           keychain initialize
-          # เราจะดึงเฉพาะ STORE เท่านั้น เพื่อเลิกยุ่งกับกุญแจ Development ที่หายไป
-          # และใช้ --create เพื่อสร้างชุดกุญแจใหม่ที่สมบูรณ์ขึ้นมาเองเลย
-          app-store-connect fetch-signing-files "th.go.nso.ThaiStatNso2019" --type IOS_APP_STORE --create
-          keychain add-certificates
+          xcode-project use-profiles
       - name: Get Flutter packages
         script: |
           flutter packages pub get
-      - name: Flutter build xcarchive (No Signing)
+      - name: Flutter build ipa
         script: |
-          flutter build ipa --release --no-codesign
-      - name: Export and Sign IPA with Codemagic
-        script: |
-          xcode-project build-ipa \
-            --workspace ios/Runner.xcworkspace \
-            --scheme Runner
+          # Build ด้วยวิธีที่ Codemagic จะหยิบใบรับรองจากหน้าเว็บมาใช้โดยตรง
+          flutter build ipa --release --export-method app-store
     artifacts:
       - build/ios/ipa/*.ipa
     publishing:
