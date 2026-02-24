@@ -24,10 +24,17 @@ workflows:
       - name: Get Flutter packages
         script: |
           flutter packages pub get
-      - name: Flutter build ipa
+      - name: Flutter build xcarchive
         script: |
-          # Uses version from pubspec.yaml automatically
-          flutter build ipa --release --export-method app-store
+          # Build โดยไม่เซ็นชื่อก่อน เพื่อสร้าง Archive
+          flutter build ipa --release --no-codesign
+      - name: Xcode build ipa (Sign with Codemagic)
+        script: |
+          # ใช้ Codemagic Tools เซ็นชื่อให้ตาม Profiles ที่ดึงมา
+          xcode-project build-ipa \
+            --workspace ios/Runner.xcworkspace \
+            --scheme Runner \
+            --bundle-id "th.go.nso.ThaiStatNso2019"
     artifacts:
       - build/ios/ipa/*.ipa
     publishing:
