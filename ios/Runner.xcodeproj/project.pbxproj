@@ -493,7 +493,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 23;
-				PRODUCT_BUNDLE_IDENTIFIER = th.go.nso.ThaiStatNso2019;
+				PRODUCT_BUNDLE_IDENTIFIER = th.go.nso.nsothinktank.ios2024;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -695,7 +695,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 23;
-				PRODUCT_BUNDLE_IDENTIFIER = th.go.nso.ThaiStatNso2019;
+				PRODUCT_BUNDLE_IDENTIFIER = th.go.nso.nsothinktank.ios2024;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -735,7 +735,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 23;
-				PRODUCT_BUNDLE_IDENTIFIER = th.go.nso.ThaiStatNso2019;
+				PRODUCT_BUNDLE_IDENTIFIER = th.go.nso.nsothinktank.ios2024;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
