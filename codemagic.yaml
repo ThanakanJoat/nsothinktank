@@ -14,6 +14,8 @@ workflows:
       - name: Set up code signing settings on Codemagic
         script: | 
           keychain initialize
+          # ดึงทั้ง Development และ App Store profiles เพื่อป้องกัน Xcode ถามหา
+          app-store-connect fetch-signing-files "th.go.nso.ThaiStatNso2019" --type IOS_APP_DEVELOPMENT --create
           app-store-connect fetch-signing-files "th.go.nso.ThaiStatNso2019" --type IOS_APP_STORE --create
           keychain add-certificates
           xcode-project use-profiles
