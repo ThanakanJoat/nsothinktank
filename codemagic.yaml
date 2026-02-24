@@ -18,6 +18,8 @@ workflows:
           app-store-connect fetch-signing-files "th.go.nso.ThaiStatNso2019" --type IOS_APP_DEVELOPMENT --create
           app-store-connect fetch-signing-files "th.go.nso.ThaiStatNso2019" --type IOS_APP_STORE --create
           keychain add-certificates
+          # บังคับปิด Automatic Signing ในไฟล์โปรเจกต์
+          sed -i '' 's/ProvisioningStyle = Automatic;/ProvisioningStyle = Manual;/g' ios/Runner.xcodeproj/project.pbxproj
           xcode-project use-profiles
       - name: Get Flutter packages
         script: |
