@@ -14,17 +14,19 @@ workflows:
       - name: Set up code signing settings on Codemagic
         script: | 
           keychain initialize
+          # Fetch both Development and Distribution profiles (Xcode often needs both)
+          app-store-connect fetch-signing-files "th.go.nso.ThaiStatNso2019" --type IOS_APP_DEVELOPMENT --create
           app-store-connect fetch-signing-files "th.go.nso.ThaiStatNso2019" --type IOS_APP_STORE --create
           keychain add-certificates
-          # บังคับเปลี่ยนเป็น Manual Signing เพื่อไม่ให้ Xcode ถามหา Apple ID บัญชีบุคคล
-          sed -i '' 's/CODE_SIGN_STYLE = Automatic/CODE_SIGN_STYLE = Manual/g' ios/Runner.xcodeproj/project.pbxproj
+          # Force set to Manual signing in the project file
+          sed -i '' 's/CODE_SIGN_STYLE = Automatic;/CODE_SIGN_STYLE = Manual;/g' ios/Runner.xcodeproj/project.pbxproj
           xcode-project use-profiles
       - name: Get Flutter packages
         script: |
           flutter packages pub get
       - name: Flutter build ipa
         script: |
-          flutter build ipa --release --export-method app-store
+          flutter build ipa --release --export-method app-store --build-number=$BUILD_NUMBER
     artifacts:
       - build/ios/ipa/*.ipa
     publishing:
