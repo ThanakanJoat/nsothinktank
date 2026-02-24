@@ -32,7 +32,7 @@ class AppTheme {
           color: Colors.white,
         ),
       ),
-      cardTheme: const CardTheme(
+      cardTheme: CardTheme(
         color: surfaceColor,
         elevation: 2,
         margin: EdgeInsets.all(8),
