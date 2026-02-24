@@ -31,7 +31,6 @@ workflows:
           xcode-project build-ipa \
             --workspace ios/Runner.xcworkspace \
             --scheme Runner \
-            --bundle-id "th.go.nso.ThaiStatNso2019" \
             --archive-flags="CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO"
     artifacts:
       - build/ios/ipa/*.ipa
