@@ -21,18 +21,10 @@ workflows:
       - name: Get Flutter packages
         script: |
           flutter packages pub get
-      - name: Flutter build xcarchive
+      - name: Flutter build ipa
         script: |
-          # Build เป็น Archive โดยไม่ต้องเซ็นชื่อ (เพื่อตัดปัญหา Xcode ถามหา Apple ID)
-          flutter build ipa --release --no-codesign
-      - name: Xcode build ipa (Sign and Export)
-        script: |
-          # ใช้คำสั่งพิเศษของ Codemagic ในการ "เซ็นชื่อทับ" และสร้างไฟล์ IPA 
-          # โดยระบุ Bundle ID ให้ชัดเจนเพื่อให้ระบบเลือกใบรับรองได้ถูกต้อง
-          xcode-project build-ipa \
-            --workspace ios/Runner.xcworkspace \
-            --scheme Runner \
-            --bundle-id "th.go.nso.ThaiStatNso2019"
+          # ใช้คำสั่งมาตรฐานเดียวกับที่คุณรันในเครื่อง แต่ให้ Codemagic จัดการเรื่อง Signing ให้อัตโนมัติ
+          flutter build ipa --release --export-method app-store
     artifacts:
       - build/ios/ipa/*.ipa
     publishing:
