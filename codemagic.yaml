@@ -14,22 +14,19 @@ workflows:
       - name: Set up code signing settings on Codemagic
         script: | 
           keychain initialize
-          # ดึงใบรับรองและโปรไฟล์มาเตรียมไว้ (ถ้ากุญแจหาย ระบบจะพยายามจัดการในขั้นตอนนี้)
+          # เมื่อคุณลบทั้ง Certificates และ Profiles ในเว็บ Apple แล้ว 
+          # คำสั่งนี้จะสร้างชุดใหม่ที่สมบูรณ์ขึ้นมาให้เองโดยอัตโนมัติครับ
           app-store-connect fetch-signing-files "th.go.nso.ThaiStatNso2019" --type IOS_APP_STORE --create
           keychain add-certificates
+          xcode-project use-profiles
       - name: Get Flutter packages
         script: |
           flutter packages pub get
-      - name: Flutter build xcarchive (No Signing)
+      - name: Flutter build ipa
         script: |
-          # สร้างแอปแบบดิบๆ โดยไม่เซ็นชื่อ (เพื่อตัดปัญหา Xcode ถามหา Apple ID)
-          flutter build ipa --release --no-codesign
-      - name: Export and Sign IPA with Codemagic
-        script: |
-          # ใช้เครื่องมือของ Codemagic เซ็นชื่อทับลงไปในไฟล์ที่ได้จากขั้นตอนก่อนหน้า
-          xcode-project build-ipa \
-            --workspace ios/Runner.xcworkspace \
-            --scheme Runner
+          # Build ด้วยวิธีมาตรฐาน ซึ่งจะผ่านทันทีเมื่อโปรไฟล์ถูกสร้างใหม่
+          flutter build ipa --release --export-method app-store
+    artifacts:
     artifacts:
       - build/ios/ipa/*.ipa
     publishing:
