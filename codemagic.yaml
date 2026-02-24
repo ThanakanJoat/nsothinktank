@@ -12,30 +12,27 @@ workflows:
       - name: Set up code signing
         script: | 
           keychain initialize
-          # 1. ดึงโปรไฟล์ "สีเขียว" จากหน้าเว็บมาลงเครื่อง
+          # ดึงโปรไฟล์ "สีเขียว" จากหน้าเว็บมาลงเครื่อง
           xcode-project use-profiles
-
-          # 2. ปรับแต่งโปรเจกต์ Xcode ให้ยอมใช้โปรไฟล์แบบ Manual ที่เราเตรียมไว้
-          # (ขั้นตอนนี้สำคัญมาก เพื่อข้ามปัญหา No development certificates)
+          
+          # บังคับโปรเจกต์ให้เป็น Manual เพื่อให้เราคุมเองได้ 100%
           sed -i '' 's/CODE_SIGN_STYLE = Automatic;/CODE_SIGN_STYLE = Manual;/g' ios/Runner.xcodeproj/project.pbxproj
-          sed -i '' 's/CODE_SIGN_IDENTITY = "Apple Development";/CODE_SIGN_IDENTITY = "Apple Distribution";/g' ios/Runner.xcodeproj/project.pbxproj
-          sed -i '' 's/CODE_SIGN_IDENTITY\[sdk=iphoneos\*\] = "iPhone Developer";/CODE_SIGN_IDENTITY = "Apple Distribution";/g' ios/Runner.xcodeproj/project.pbxproj
+          sed -i '' 's/DEVELOPMENT_TEAM = .*;/DEVELOPMENT_TEAM = HTYHCF93L8;/g' ios/Runner.xcodeproj/project.pbxproj
       - name: Get Flutter packages
         script: |
           flutter packages pub get
-      - name: Build IPA (Final Version)
+      - name: Build and Sign IPA
         script: |
-          # ใช้คำสั่งมาตรฐาน แต่เจาะจงให้ข้ามขั้นตอนการเซ็นชื่อของ Xcode 
-          # แล้วให้ Codemagic จัดการแปะใบรับรองให้เองในตัว
-          flutter build ipa --release \
-            --export-method app-store \
-            --build-number=$BUILD_NUMBER \
-            --no-codesign
-            
-          # ขั้นตอนนี้จะหยิบเอาไฟล์จากหน้าเว็บมาเซ็นทับลงไปอย่างถูกต้อง
+          # 1. รัน Flutter Build เพื่อรัน Pods และเตรียมเครื่องยนต์ให้พร้อม
+          flutter build ios --release --no-codesign
+          
+          # 2. ใช้คำสั่งวิเศษเพื่อ Build IPA โดย "ข้าม" การตรวจใบรับรองในขั้นตอนแรก (Archive)
+          # แล้วค่อยให้มันไปเซ็นชื่อจริงๆ ในขั้นตอนสุดท้าย (Export)
           xcode-project build-ipa \
             --workspace ios/Runner.xcworkspace \
-            --scheme Runner
+            --scheme Runner \
+            --bundle-id "th.go.nso.ThaiStatNso2019" \
+            --archive-flags="CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO"
     artifacts:
       - build/ios/ipa/*.ipa
     publishing:
